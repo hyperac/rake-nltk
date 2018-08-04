@@ -213,10 +213,21 @@ class Rake(object):
         :return: List of contender phrases that are formed after dropping
                  stopwords and punctuations.
         """
-        groups = groupby(word_list, lambda x: x not in self.to_ignore)
+        groups = groupby(
+            word_list,
+            lambda x: self.findpunc(x)
+        )
         phrases = [tuple(group[1]) for group in groups if group[0]]
         return list(
             filter(
                 lambda x: self.min_length <= len(x) <= self.max_length, phrases
             )
         )
+
+    def findpunc(self, x):
+        try:
+            if x[1] in string.punctuation:
+                return False
+        except IndexError:
+            pass
+        return x not in self.to_ignore
